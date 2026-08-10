@@ -19,17 +19,19 @@
 /* Begin PBXFileReference section */
 		1588051FE3325ED9F5BB9AA7 /* Identity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Identity.swift; sourceTree = "<group>"; };
 		1CDEE7C4AC603739B1782002 /* IdentityConsistencyTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = IdentityConsistencyTests.swift; sourceTree = "<group>"; };
-		315BA1EBB9429AC6CA67EC02 /* org.eof.tools.MCPStudio.LaunchAgent.plist.template */ = {isa = PBXFileReference; includeInIndex = 1; path = org.eof.tools.MCPStudio.LaunchAgent.plist.template; sourceTree = "<group>"; };
+		315BA1EBB9429AC6CA67EC02 /* org.eof.tools.MCPStudio.LaunchAgent.plist.template */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; path = org.eof.tools.MCPStudio.LaunchAgent.plist.template; sourceTree = "<group>"; };
 		5F520E9A95082F5A82B92784 /* main.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		6732DB721BC9BB284EB9A4D4 /* README-AGENT-DESIGN-DESCISION.md */ = {isa = PBXFileReference; includeInIndex = 1; path = "README-AGENT-DESIGN-DESCISION.md"; sourceTree = "<group>"; };
-		747A0185E37C2D2EDEC7111E /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
+		6732DB721BC9BB284EB9A4D4 /* README-AGENT-DESIGN-DESCISION.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = "README-AGENT-DESIGN-DESCISION.md"; sourceTree = "<group>"; };
+		747A0185E37C2D2EDEC7111E /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		88B04F7CE2E232539D77BEBF /* MCPStudioLaunchAgentTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MCPStudioLaunchAgentTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FDF9577374694230BB0D092 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		A74D0F512D9B4F73A65C9102 /* bump-release-version.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "bump-release-version.sh"; sourceTree = "<group>"; };
 		C4FFF0F13533F9E4704794B7 /* MCPStudioLaunchAgentService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MCPStudioLaunchAgentService.swift; sourceTree = "<group>"; };
 		D7FDF6C28611AD4E16DB14C1 /* Package.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
-		D804AC124BFBD74048BD3B5D /* MCPStudioLaunchAgent */ = {isa = PBXFileReference; includeInIndex = 0; path = MCPStudioLaunchAgent; sourceTree = BUILT_PRODUCTS_DIR; };
+		D804AC124BFBD74048BD3B5D /* MCPStudioLaunchAgent */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "compiled.mach-o.executable"; path = MCPStudioLaunchAgent; sourceTree = BUILT_PRODUCTS_DIR; };
 		E037224818AF0F9B88B07D41 /* install.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = install.sh; sourceTree = "<group>"; };
 		F70FCC3701C65746AFC032AD /* uninstall.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = uninstall.sh; sourceTree = "<group>"; };
+		F79BBABC302A4DBC009CC8CB /* build-pkg.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "build-pkg.sh"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,7 +75,6 @@
 			children = (
 				1CDEE7C4AC603739B1782002 /* IdentityConsistencyTests.swift */,
 			);
-			name = MCPStudioLaunchAgentTests;
 			path = MCPStudioLaunchAgentTests;
 			sourceTree = "<group>";
 		};
@@ -82,7 +83,6 @@
 			children = (
 				315BA1EBB9429AC6CA67EC02 /* org.eof.tools.MCPStudio.LaunchAgent.plist.template */,
 			);
-			name = LaunchAgents;
 			path = LaunchAgents;
 			sourceTree = "<group>";
 		};
@@ -91,7 +91,6 @@
 			children = (
 				7FED0853FC3D6C00061E6A44 /* MCPStudioLaunchAgentTests */,
 			);
-			name = Tests;
 			path = Tests;
 			sourceTree = "<group>";
 		};
@@ -111,17 +110,17 @@
 				C4FFF0F13533F9E4704794B7 /* MCPStudioLaunchAgentService.swift */,
 				5F520E9A95082F5A82B92784 /* main.swift */,
 			);
-			name = MCPStudioLaunchAgent;
 			path = MCPStudioLaunchAgent;
 			sourceTree = "<group>";
 		};
 		D268E06DE08483891B24DCDE /* scripts */ = {
 			isa = PBXGroup;
 			children = (
+				A74D0F512D9B4F73A65C9102 /* bump-release-version.sh */,
+				F79BBABC302A4DBC009CC8CB /* build-pkg.sh */,
 				E037224818AF0F9B88B07D41 /* install.sh */,
 				F70FCC3701C65746AFC032AD /* uninstall.sh */,
 			);
-			name = scripts;
 			path = scripts;
 			sourceTree = "<group>";
 		};
@@ -145,7 +144,6 @@
 			children = (
 				B611C8A4CD0BEE5D2D91EC0E /* MCPStudioLaunchAgent */,
 			);
-			name = Sources;
 			path = Sources;
 			sourceTree = "<group>";
 		};
@@ -200,7 +198,6 @@
 					};
 					8BCA4C3A2B8A661C9F12FD98 = {
 						CreatedOnToolsVersion = 26.3;
-						TestTargetID = 8B721CE3282C277C1ABF44AC;
 					};
 				};
 			};
@@ -403,7 +400,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 20260810190602;
 				DEVELOPMENT_TEAM = 83NQU389JN;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -411,7 +408,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "EoF MCP Studio Launch Agent";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = org.eof.tools.MCPStudio.LaunchAgent;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -428,7 +425,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 20260810190602;
 				DEVELOPMENT_TEAM = 83NQU389JN;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -436,7 +433,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "EoF MCP Studio Launch Agent";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = org.eof.tools.MCPStudio.LaunchAgent;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

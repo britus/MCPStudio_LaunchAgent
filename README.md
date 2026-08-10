@@ -28,13 +28,15 @@ Sources/MCPStudioLaunchAgent/
 LaunchAgents/
   org.eof.tools.MCPStudio.LaunchAgent.plist.template
 scripts/
+  bump-release-version.sh              Release-/Build-Version aktualisieren
+  build-pkg.sh                         Signiertes Distributionspaket erzeugen
   install.sh                           Build + Installation in gui/<uid>
   uninstall.sh                         bootout + Aufräumen
 ```
 
 Der Agent stellt den XPC-Mach-Service `group.org.eof.apps.mcpstudio.agent` bereit.
 launchd registriert den Namen über den `MachServices`-Key im plist im per-user
-Mach-Bootstrap; der Agent vendet ihn via `NSXPCListener(machServiceName:)`.
+Mach-Bootstrap; der Agent verwendet ihn via `NSXPCListener(machServiceName:)`.
 
 Die Produktidentität folgt dem bestehenden EoF-MCP-Studio-Projekt:
 
@@ -68,6 +70,52 @@ Das Xcode-Target bettet die kanonische Bundle-ID und den Display Name als
 Info-plist-Sektion in das ausführbare Mach-O ein. Für lokale Builds nutzt Xcode
 automatische Signierung mit dem Team `83NQU389JN`; die spätere
 Developer-ID-Signierung und Notarisierung bleiben Teil des Distributionsschritts.
+
+### Installer-Paket
+
+`scripts/build-pkg.sh` baut ein universelles Release-Binary, bereitet die
+systemweiten LaunchAgent-Dateien vor und erzeugt unter
+`Build/Package/Artifacts` ein auslieferbares Installer-Paket mit SHA-256- und
+Release-Metadaten-Sidecars. Nach erfolgreicher Signierung und Notarisierung legt
+das Skript das finale Paket außerdem nach
+`../MCPStudio_public/releases/launchagent/artifacts/` ab. Damit folgt es dem
+lokalen Spiegel der Produktionsstruktur und dem Namensschema
+`MCPStudioLaunchAgent-<Version>.pkg`. Es findet dabei kein Upload statt.
+
+Vor einem neuen Build erhöht das Paket-Skript automatisch den letzten
+Bestandteil von `MARKETING_VERSION` und setzt `CURRENT_PROJECT_VERSION` auf
+einen monotonen 14-stelligen UTC-Zeitstempel (`yyyyMMddHHmmss`). Dieselben
+Werte werden im Mach-O eingebettet und für Paketdateiname sowie Release-JSON
+verwendet. Mit `--skip-version-bump` oder
+`SKIP_RELEASE_VERSION_BUMP=1` lässt sich ein vorhandener Stand unverändert neu
+bauen. `--skip-build` erhöht die Version grundsätzlich nicht.
+
+Ein rein lokaler Prüf-Build ohne Signierungszugriff oder Netzwerkverkehr:
+
+```sh
+scripts/build-pkg.sh --unsigned
+```
+
+Für ein Produktionsartefakt benötigt das Skript Developer-ID-Application- und
+Developer-ID-Installer-Identitäten und notarisiert das finale Paket. Das lokale
+Spiegelziel lässt sich mit `--release-dir` überschreiben oder mit
+`--no-local-release` auslassen. Das Skript lädt selbst nichts hoch und ruft auch
+nicht den Deployment-Importer der Haupt-App auf. Unsignierte Prüfpakete werden
+nicht automatisch in den Produktionsspiegel gelegt.
+
+Der Benutzer lädt `MCPStudioLaunchAgent-<Version>.pkg` von der EoF-MCP-Studio-
+Website herunter und öffnet es anschließend selbst im macOS Installer. Die
+App-Store-App installiert den Agent nicht und erhält dadurch auch keine
+zusätzlichen Installationsrechte; sie kann lediglich auf das optionale Paket
+und die manuelle Installation hinweisen.
+
+Das Produktionspaket installiert das Binary nach
+`/Library/Application Support/org.eof.tools.MCPStudio.LaunchAgent/MCPStudioLaunchAgent`
+und das plist nach
+`/Library/LaunchAgents/org.eof.tools.MCPStudio.LaunchAgent.plist`. Dafür ist eine
+Administratorfreigabe nötig; der Agent selbst läuft weiterhin in der GUI-Session
+des jeweiligen Benutzers und nicht als root. `scripts/install.sh` bleibt daneben
+der benutzerlokale Entwicklungs-Installer.
 
 ## Installation (aktueller Benutzer, ohne sudo)
 
