@@ -19,6 +19,9 @@ enum MCPStudioProcessExecutionPolicy {
     static let maximumOutputBytes = 10 * 1024 * 1024
     static let maximumInputBytes = 5 * 1024 * 1024
     static let maximumInlineSourceBytes = 1024 * 1024
+    static let maximumConcurrentJobs = 4
+    static let maximumRequestPayloadBytes = 8 * 1024 * 1024
+    static let maximumHelloPayloadBytes = 64 * 1024
 
     private static let nodeProfile = "runtime.node.v1"
     private static let pythonProfile = "runtime.python.v1"

@@ -160,6 +160,25 @@ final class ProtocolPolicyTests: XCTestCase {
         XCTAssertFalse(result.succeeded)
     }
 
+    func testJobManagerRejectsWorkAboveConcurrencyLimit() {
+        let manager = MCPStudioProcessJobManager()
+        var acceptedRequestIDs: [UUID] = []
+
+        for _ in 0..<MCPStudioProcessExecutionPolicy.maximumConcurrentJobs {
+            let request = pythonRequest(source: "import time; time.sleep(3)", timeout: 10)
+            XCTAssertTrue(manager.submit(request).accepted)
+            acceptedRequestIDs.append(request.requestID)
+        }
+
+        let rejected = manager.submit(pythonRequest(source: "print('too-many')", timeout: 10))
+        XCTAssertFalse(rejected.accepted)
+        XCTAssertEqual(rejected.errorCode, "agent_busy")
+
+        for requestID in acceptedRequestIDs {
+            _ = manager.cancel(requestID: requestID)
+        }
+    }
+
     private func pythonRequest(source: String, timeout: Double) -> MCPStudioProcessExecutionRequest {
         MCPStudioProcessExecutionRequest(
             requestID: UUID(),

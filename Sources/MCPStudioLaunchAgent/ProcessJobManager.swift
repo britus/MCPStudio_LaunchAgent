@@ -105,6 +105,21 @@ final class MCPStudioProcessJobManager: @unchecked Sendable {
                 message: "The request identifier already exists; the existing job was not executed again."
             )
         }
+        let activeJobCount = jobs.values.reduce(into: 0) { count, job in
+            if job.state != .completed {
+                count += 1
+            }
+        }
+        guard activeJobCount < MCPStudioProcessExecutionPolicy.maximumConcurrentJobs else {
+            lock.unlock()
+            return MCPStudioProcessJobAccepted(
+                accepted: false,
+                requestID: request.requestID,
+                state: nil,
+                errorCode: "agent_busy",
+                message: "The Launch Agent is already running the maximum number of concurrent jobs."
+            )
+        }
         let record = JobRecord(validatedRequest: validated)
         jobs[request.requestID] = record
         lock.unlock()

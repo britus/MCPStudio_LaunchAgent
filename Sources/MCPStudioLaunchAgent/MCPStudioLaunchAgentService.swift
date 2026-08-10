@@ -20,6 +20,14 @@ final class MCPStudioLaunchAgentService: NSObject, MCPStudioLaunchAgentProtocol 
     }
 
     func hello(_ request: Data, withReply reply: @escaping (Data) -> Void) {
+        guard request.count <= MCPStudioProcessExecutionPolicy.maximumHelloPayloadBytes else {
+            reply(MCPStudioLaunchAgentWireCodec.encode(agentHello(
+                accepted: false,
+                protocolMinor: MCPStudioLaunchAgentProtocolMinor,
+                message: "The client hello payload exceeds the V1 size limit."
+            )))
+            return
+        }
         let clientHello: MCPStudioAgentClientHello
         do {
             clientHello = try MCPStudioLaunchAgentWireCodec.decode(MCPStudioAgentClientHello.self, from: request)
@@ -64,6 +72,16 @@ final class MCPStudioLaunchAgentService: NSObject, MCPStudioLaunchAgentProtocol 
     }
 
     func submit(_ request: Data, withReply reply: @escaping (Data) -> Void) {
+        guard request.count <= MCPStudioProcessExecutionPolicy.maximumRequestPayloadBytes else {
+            reply(MCPStudioLaunchAgentWireCodec.encode(MCPStudioProcessJobAccepted(
+                accepted: false,
+                requestID: UUID(),
+                state: nil,
+                errorCode: "request_too_large",
+                message: "The process request payload exceeds the V1 size limit."
+            )))
+            return
+        }
         guard isHandshakeComplete else {
             let requestID = (try? MCPStudioLaunchAgentWireCodec.decode(
                 MCPStudioProcessExecutionRequest.self,
