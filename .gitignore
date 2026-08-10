@@ -1,0 +1,8 @@
+# SwiftPM build artifacts
+.build/
+.swiftpm/
+Build/
+build/
+*.xcuserstate
+xcuserdata/
+.DS_Store

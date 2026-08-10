@@ -1,0 +1,499 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		02278F45B42438D5AEE259DE /* MCPStudioLaunchAgentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4FFF0F13533F9E4704794B7 /* MCPStudioLaunchAgentService.swift */; };
+		16CD724B09556F0BD2CB0147 /* Identity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1588051FE3325ED9F5BB9AA7 /* Identity.swift */; };
+		4207C9AC8095A2C0DEEC6542 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FDF9577374694230BB0D092 /* Cocoa.framework */; };
+		4E9AD8BD896FA0C344520D10 /* IdentityConsistencyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CDEE7C4AC603739B1782002 /* IdentityConsistencyTests.swift */; };
+		58015E17247999218A2A6679 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FDF9577374694230BB0D092 /* Cocoa.framework */; };
+		8156CAB77F9D6131A415D68B /* Identity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1588051FE3325ED9F5BB9AA7 /* Identity.swift */; };
+		E140AEF2C6858EF713CDB915 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F520E9A95082F5A82B92784 /* main.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1588051FE3325ED9F5BB9AA7 /* Identity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Identity.swift; sourceTree = "<group>"; };
+		1CDEE7C4AC603739B1782002 /* IdentityConsistencyTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = IdentityConsistencyTests.swift; sourceTree = "<group>"; };
+		315BA1EBB9429AC6CA67EC02 /* org.eof.tools.MCPStudio.LaunchAgent.plist.template */ = {isa = PBXFileReference; includeInIndex = 1; path = org.eof.tools.MCPStudio.LaunchAgent.plist.template; sourceTree = "<group>"; };
+		5F520E9A95082F5A82B92784 /* main.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		6732DB721BC9BB284EB9A4D4 /* README-AGENT-DESIGN-DESCISION.md */ = {isa = PBXFileReference; includeInIndex = 1; path = "README-AGENT-DESIGN-DESCISION.md"; sourceTree = "<group>"; };
+		747A0185E37C2D2EDEC7111E /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
+		88B04F7CE2E232539D77BEBF /* MCPStudioLaunchAgentTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MCPStudioLaunchAgentTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9FDF9577374694230BB0D092 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		C4FFF0F13533F9E4704794B7 /* MCPStudioLaunchAgentService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MCPStudioLaunchAgentService.swift; sourceTree = "<group>"; };
+		D7FDF6C28611AD4E16DB14C1 /* Package.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
+		D804AC124BFBD74048BD3B5D /* MCPStudioLaunchAgent */ = {isa = PBXFileReference; includeInIndex = 0; path = MCPStudioLaunchAgent; sourceTree = BUILT_PRODUCTS_DIR; };
+		E037224818AF0F9B88B07D41 /* install.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = install.sh; sourceTree = "<group>"; };
+		F70FCC3701C65746AFC032AD /* uninstall.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = uninstall.sh; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3DA15D6351DD4DDFB9A625D2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				58015E17247999218A2A6679 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CCAFB70732A64A29DA27DA77 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4207C9AC8095A2C0DEEC6542 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		06F18236E3EFADDEED6D9379 /* OS X */ = {
+			isa = PBXGroup;
+			children = (
+				9FDF9577374694230BB0D092 /* Cocoa.framework */,
+			);
+			name = "OS X";
+			sourceTree = "<group>";
+		};
+		30B64DA7C3DA5C0AED84EF41 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				06F18236E3EFADDEED6D9379 /* OS X */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		7FED0853FC3D6C00061E6A44 /* MCPStudioLaunchAgentTests */ = {
+			isa = PBXGroup;
+			children = (
+				1CDEE7C4AC603739B1782002 /* IdentityConsistencyTests.swift */,
+			);
+			name = MCPStudioLaunchAgentTests;
+			path = MCPStudioLaunchAgentTests;
+			sourceTree = "<group>";
+		};
+		900F797C8D59C391F93BF02F /* LaunchAgents */ = {
+			isa = PBXGroup;
+			children = (
+				315BA1EBB9429AC6CA67EC02 /* org.eof.tools.MCPStudio.LaunchAgent.plist.template */,
+			);
+			name = LaunchAgents;
+			path = LaunchAgents;
+			sourceTree = "<group>";
+		};
+		9E6C359C1281DD2BE80B06B7 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				7FED0853FC3D6C00061E6A44 /* MCPStudioLaunchAgentTests */,
+			);
+			name = Tests;
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		A0A32C4FAEA5C3159A562FD4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D804AC124BFBD74048BD3B5D /* MCPStudioLaunchAgent */,
+				88B04F7CE2E232539D77BEBF /* MCPStudioLaunchAgentTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B611C8A4CD0BEE5D2D91EC0E /* MCPStudioLaunchAgent */ = {
+			isa = PBXGroup;
+			children = (
+				1588051FE3325ED9F5BB9AA7 /* Identity.swift */,
+				C4FFF0F13533F9E4704794B7 /* MCPStudioLaunchAgentService.swift */,
+				5F520E9A95082F5A82B92784 /* main.swift */,
+			);
+			name = MCPStudioLaunchAgent;
+			path = MCPStudioLaunchAgent;
+			sourceTree = "<group>";
+		};
+		D268E06DE08483891B24DCDE /* scripts */ = {
+			isa = PBXGroup;
+			children = (
+				E037224818AF0F9B88B07D41 /* install.sh */,
+				F70FCC3701C65746AFC032AD /* uninstall.sh */,
+			);
+			name = scripts;
+			path = scripts;
+			sourceTree = "<group>";
+		};
+		F6200F1F4286EBCAC9A965BA = {
+			isa = PBXGroup;
+			children = (
+				A0A32C4FAEA5C3159A562FD4 /* Products */,
+				30B64DA7C3DA5C0AED84EF41 /* Frameworks */,
+				FFF6392C83875CA98A88AA1F /* Sources */,
+				9E6C359C1281DD2BE80B06B7 /* Tests */,
+				900F797C8D59C391F93BF02F /* LaunchAgents */,
+				D268E06DE08483891B24DCDE /* scripts */,
+				D7FDF6C28611AD4E16DB14C1 /* Package.swift */,
+				747A0185E37C2D2EDEC7111E /* README.md */,
+				6732DB721BC9BB284EB9A4D4 /* README-AGENT-DESIGN-DESCISION.md */,
+			);
+			sourceTree = "<group>";
+		};
+		FFF6392C83875CA98A88AA1F /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				B611C8A4CD0BEE5D2D91EC0E /* MCPStudioLaunchAgent */,
+			);
+			name = Sources;
+			path = Sources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8B721CE3282C277C1ABF44AC /* MCPStudioLaunchAgent */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 194B721AC6F32890C6C045DD /* Build configuration list for PBXNativeTarget "MCPStudioLaunchAgent" */;
+			buildPhases = (
+				3EFFD478A5DA511D3F3D8951 /* Sources */,
+				3DA15D6351DD4DDFB9A625D2 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MCPStudioLaunchAgent;
+			productName = MCPStudioLaunchAgent;
+			productReference = D804AC124BFBD74048BD3B5D /* MCPStudioLaunchAgent */;
+			productType = "com.apple.product-type.tool";
+		};
+		8BCA4C3A2B8A661C9F12FD98 /* MCPStudioLaunchAgentTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A0512EB6DF40184200C3F83D /* Build configuration list for PBXNativeTarget "MCPStudioLaunchAgentTests" */;
+			buildPhases = (
+				06A60443DB8648965A2F09A1 /* Sources */,
+				CCAFB70732A64A29DA27DA77 /* Frameworks */,
+				6D989E90398F928EDAC7D60D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MCPStudioLaunchAgentTests;
+			productName = MCPStudioLaunchAgentTests;
+			productReference = 88B04F7CE2E232539D77BEBF /* MCPStudioLaunchAgentTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B5F1DB9AF6D293935330C14A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2630;
+				LastUpgradeCheck = 2630;
+				TargetAttributes = {
+					8B721CE3282C277C1ABF44AC = {
+						CreatedOnToolsVersion = 26.3;
+					};
+					8BCA4C3A2B8A661C9F12FD98 = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = 8B721CE3282C277C1ABF44AC;
+					};
+				};
+			};
+			buildConfigurationList = 8D85AEE88E31819AC4CDA012 /* Build configuration list for PBXProject "MCPStudioLaunchAgent" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = F6200F1F4286EBCAC9A965BA;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A0A32C4FAEA5C3159A562FD4 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8B721CE3282C277C1ABF44AC /* MCPStudioLaunchAgent */,
+				8BCA4C3A2B8A661C9F12FD98 /* MCPStudioLaunchAgentTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6D989E90398F928EDAC7D60D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		06A60443DB8648965A2F09A1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				16CD724B09556F0BD2CB0147 /* Identity.swift in Sources */,
+				4E9AD8BD896FA0C344520D10 /* IdentityConsistencyTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3EFFD478A5DA511D3F3D8951 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8156CAB77F9D6131A415D68B /* Identity.swift in Sources */,
+				02278F45B42438D5AEE259DE /* MCPStudioLaunchAgentService.swift in Sources */,
+				E140AEF2C6858EF713CDB915 /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		09834476D6A8AD43DE8F720C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 83NQU389JN;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
+				PRODUCT_BUNDLE_IDENTIFIER = org.eof.tools.MCPStudio.LaunchAgentTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+			};
+			name = Release;
+		};
+		2A2330608FFF1CFEC3B97AF3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		59EE07C31FA994D64647198D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		683E79F123A3E11696103B58 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 83NQU389JN;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "EoF MCP Studio Launch Agent";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.eof.tools.MCPStudio.LaunchAgent;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+			};
+			name = Debug;
+		};
+		97556CA0BF69F0F6BD327577 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 83NQU389JN;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "EoF MCP Studio Launch Agent";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.eof.tools.MCPStudio.LaunchAgent;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+			};
+			name = Release;
+		};
+		C31DFA4FDD971FA08A728ADC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 83NQU389JN;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
+				PRODUCT_BUNDLE_IDENTIFIER = org.eof.tools.MCPStudio.LaunchAgentTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		194B721AC6F32890C6C045DD /* Build configuration list for PBXNativeTarget "MCPStudioLaunchAgent" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				97556CA0BF69F0F6BD327577 /* Release */,
+				683E79F123A3E11696103B58 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8D85AEE88E31819AC4CDA012 /* Build configuration list for PBXProject "MCPStudioLaunchAgent" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				59EE07C31FA994D64647198D /* Debug */,
+				2A2330608FFF1CFEC3B97AF3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A0512EB6DF40184200C3F83D /* Build configuration list for PBXNativeTarget "MCPStudioLaunchAgentTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				09834476D6A8AD43DE8F720C /* Release */,
+				C31DFA4FDD971FA08A728ADC /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B5F1DB9AF6D293935330C14A /* Project object */;
+}

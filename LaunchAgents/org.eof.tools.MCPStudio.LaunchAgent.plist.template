@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Unique label of the job; identifies the service in the gui domain. -->
+    <key>Label</key>
+    <string>org.eof.tools.MCPStudio.LaunchAgent</string>
+
+    <!-- Absolute path to the agent binary; substituted by scripts/install.sh. -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>__AGENT_PATH__</string>
+    </array>
+
+    <!-- Mach service vended by the agent via NSXPCListener(machServiceName:).
+         launchd registers this name in the per-user (gui) Mach bootstrap. -->
+    <key>MachServices</key>
+    <dict>
+        <key>group.org.eof.apps.mcpstudio.agent</key>
+        <true/>
+    </dict>
+
+    <!-- Start when the user session begins, restart on crash. -->
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+
+    <!-- User-session agent: interactive QoS tier. -->
+    <key>ProcessType</key>
+    <string>Interactive</string>
+
+    <!-- Fallback logging only; primary logging is os.Logger
+         (visible via Console.app / `log stream`). -->
+    <key>StandardOutPath</key>
+    <string>/tmp/org.eof.tools.MCPStudio.LaunchAgent.out.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/org.eof.tools.MCPStudio.LaunchAgent.err.log</string>
+</dict>
+</plist>
