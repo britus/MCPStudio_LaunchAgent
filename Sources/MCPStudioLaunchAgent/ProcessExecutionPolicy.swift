@@ -41,7 +41,10 @@ enum MCPStudioProcessExecutionPolicy {
         "/Applications/Xcode.app/Contents/Developer/Toolchains",
         "/Library/Developer/CommandLineTools/usr/bin",
         "/opt/homebrew/bin",
+        "/opt/homebrew/Cellar",
         "/usr/local/bin",
+        "/usr/local/Cellar",
+        "/opt/local/bin",
         "/usr/bin",
         "/bin"
     ]
@@ -62,7 +65,7 @@ enum MCPStudioProcessExecutionPolicy {
                 acceptedNames: { $0 == "node" || $0 == "nodejs" },
                 candidates: ["/opt/homebrew/bin/node", "/usr/local/bin/node", "/usr/bin/node"]
             )
-            let arguments = try runtimeArguments(for: request)
+            let arguments = try runtimeArguments(for: request, inlineFlag: "-e")
             return validated(request, executable, arguments, workingDirectoryURL, environment)
 
         case .python:
@@ -74,7 +77,7 @@ enum MCPStudioProcessExecutionPolicy {
                 acceptedNames: { $0 == "python" || $0.hasPrefix("python3") },
                 candidates: ["/opt/homebrew/bin/python3", "/usr/local/bin/python3", "/usr/bin/python3"]
             )
-            let arguments = try runtimeArguments(for: request)
+            let arguments = try runtimeArguments(for: request, inlineFlag: "-c")
             return validated(request, executable, arguments, workingDirectoryURL, environment)
 
         case .developerTool:
@@ -127,6 +130,9 @@ enum MCPStudioProcessExecutionPolicy {
         guard !request.toolID.isEmpty, request.toolID.utf8.count <= 512 else {
             throw denied("invalid_tool", "The request contains an invalid tool identifier.")
         }
+        guard request.conversationID.utf8.count <= 512 else {
+            throw denied("invalid_conversation", "The request contains an invalid conversation identifier.")
+        }
         guard request.arguments.count <= 256 else {
             throw denied("too_many_arguments", "The request exceeds the maximum argument count.")
         }
@@ -148,7 +154,10 @@ enum MCPStudioProcessExecutionPolicy {
         }
     }
 
-    private static func runtimeArguments(for request: MCPStudioProcessExecutionRequest) throws -> [String] {
+    private static func runtimeArguments(
+        for request: MCPStudioProcessExecutionRequest,
+        inlineFlag: String
+    ) throws -> [String] {
         guard let source = request.source, !source.isEmpty else {
             throw denied("missing_source", "A Python or Node.js request requires source code or a script path.")
         }
@@ -158,7 +167,7 @@ enum MCPStudioProcessExecutionPolicy {
             guard source.utf8.count <= maximumInlineSourceBytes else {
                 throw denied("inline_source_too_large", "Inline source exceeds the V1 size limit.")
             }
-            return ["-e", source] + request.arguments
+            return [inlineFlag, source] + request.arguments
         case .path:
             let scriptURL = try validatedUserFile(source)
             return [scriptURL.path] + request.arguments

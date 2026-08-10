@@ -88,4 +88,111 @@ final class ProtocolPolicyTests: XCTestCase {
             XCTAssertEqual((error as? MCPStudioProcessPolicyError)?.code, "working_directory_denied")
         }
     }
+
+    func testPythonInlineSourceUsesPythonCommandFlag() throws {
+        let request = MCPStudioProcessExecutionRequest(
+            requestID: UUID(),
+            conversationID: "conversation",
+            toolID: "org.eof.tests.python",
+            policyProfileID: "runtime.python.v1",
+            runtime: .python,
+            executableHint: "/usr/bin/python3",
+            sourceKind: .inline,
+            source: "print('ok')",
+            arguments: ["one"],
+            workingDirectory: NSHomeDirectory(),
+            environment: [:],
+            standardInput: nil,
+            timeoutSeconds: 30,
+            outputLimitBytes: 1024
+        )
+
+        let validated = try MCPStudioProcessExecutionPolicy.validate(request)
+        XCTAssertEqual(validated.arguments, ["-c", "print('ok')", "one"])
+    }
+
+    func testHomebrewRuntimeSymlinkRemainsWithinApprovedInstallationRoot() throws {
+        let nodePath = "/opt/homebrew/bin/node"
+        guard FileManager.default.isExecutableFile(atPath: nodePath) else {
+            throw XCTSkip("Homebrew Node.js is not installed on this test host.")
+        }
+        let request = MCPStudioProcessExecutionRequest(
+            requestID: UUID(),
+            conversationID: "conversation",
+            toolID: "org.eof.tests.node",
+            policyProfileID: "runtime.node.v1",
+            runtime: .node,
+            executableHint: nodePath,
+            sourceKind: .inline,
+            source: "console.log('ok')",
+            arguments: [],
+            workingDirectory: NSHomeDirectory(),
+            environment: [:],
+            standardInput: nil,
+            timeoutSeconds: 30,
+            outputLimitBytes: 1024
+        )
+
+        let validated = try MCPStudioProcessExecutionPolicy.validate(request)
+        XCTAssertTrue(validated.executableURL.path.contains("/opt/homebrew/Cellar/node/"))
+    }
+
+    func testJobManagerExecutesTypedPythonRequest() throws {
+        let manager = MCPStudioProcessJobManager()
+        let request = pythonRequest(source: "print('agent-ok')", timeout: 10)
+
+        XCTAssertTrue(manager.submit(request).accepted)
+        let result = try waitForResult(requestID: request.requestID, manager: manager)
+
+        XCTAssertTrue(result.succeeded)
+        XCTAssertEqual(String(data: result.standardOutput, encoding: .utf8), "agent-ok\n")
+        XCTAssertEqual(result.resolvedExecutable, "/usr/bin/python3")
+    }
+
+    func testJobManagerEnforcesTimeout() throws {
+        let manager = MCPStudioProcessJobManager()
+        let request = pythonRequest(source: "import time; time.sleep(3)", timeout: 1)
+
+        XCTAssertTrue(manager.submit(request).accepted)
+        let result = try waitForResult(requestID: request.requestID, manager: manager)
+
+        XCTAssertEqual(result.terminationReason, .timedOut)
+        XCTAssertFalse(result.succeeded)
+    }
+
+    private func pythonRequest(source: String, timeout: Double) -> MCPStudioProcessExecutionRequest {
+        MCPStudioProcessExecutionRequest(
+            requestID: UUID(),
+            conversationID: "conversation",
+            toolID: "org.eof.tests.python",
+            policyProfileID: "runtime.python.v1",
+            runtime: .python,
+            executableHint: "/usr/bin/python3",
+            sourceKind: .inline,
+            source: source,
+            arguments: [],
+            workingDirectory: NSHomeDirectory(),
+            environment: [:],
+            standardInput: nil,
+            timeoutSeconds: timeout,
+            outputLimitBytes: 1024 * 1024
+        )
+    }
+
+    private func waitForResult(
+        requestID: UUID,
+        manager: MCPStudioProcessJobManager,
+        timeout: TimeInterval = 5
+    ) throws -> MCPStudioProcessExecutionResult {
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            let status = manager.status(requestID: requestID)
+            if let result = status.result {
+                return result
+            }
+            Thread.sleep(forTimeInterval: 0.02)
+        }
+        XCTFail("The process job did not complete before the test deadline.")
+        throw CocoaError(.coderReadCorrupt)
+    }
 }
