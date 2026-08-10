@@ -4,8 +4,7 @@ import os
 // Entry point of the user-session launch agent.
 //
 // Lifecycle model (launchd, gui domain):
-// - The job is registered per user session via ~/Library/LaunchAgents.
-// - launchd starts the process (RunAtLoad) and restarts it on crash (KeepAlive).
+// - MachServices starts the process on demand for an authenticated XPC client.
 // - launchd sends SIGTERM on `launchctl bootout`; we shut down cleanly.
 
 private let logger = Logger(

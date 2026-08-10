@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E0F400012026081000000001 /* MCPStudioLaunchAgentProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F401012026081000000001 /* MCPStudioLaunchAgentProtocol.swift */; };
+		E0F400022026081000000002 /* ProcessExecutionPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F401022026081000000002 /* ProcessExecutionPolicy.swift */; };
+		E0F400032026081000000003 /* ProcessJobManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F401032026081000000003 /* ProcessJobManager.swift */; };
+		E0F400042026081000000004 /* MCPStudioLaunchAgentProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F401012026081000000001 /* MCPStudioLaunchAgentProtocol.swift */; };
+		E0F400052026081000000005 /* ProcessExecutionPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F401022026081000000002 /* ProcessExecutionPolicy.swift */; };
+		E0F400062026081000000006 /* ProtocolPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F401042026081000000004 /* ProtocolPolicyTests.swift */; };
 		02278F45B42438D5AEE259DE /* MCPStudioLaunchAgentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4FFF0F13533F9E4704794B7 /* MCPStudioLaunchAgentService.swift */; };
 		16CD724B09556F0BD2CB0147 /* Identity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1588051FE3325ED9F5BB9AA7 /* Identity.swift */; };
 		4207C9AC8095A2C0DEEC6542 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FDF9577374694230BB0D092 /* Cocoa.framework */; };
@@ -17,6 +23,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E0F401012026081000000001 /* MCPStudioLaunchAgentProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MCPStudioLaunchAgentProtocol.swift; sourceTree = "<group>"; };
+		E0F401022026081000000002 /* ProcessExecutionPolicy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProcessExecutionPolicy.swift; sourceTree = "<group>"; };
+		E0F401032026081000000003 /* ProcessJobManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProcessJobManager.swift; sourceTree = "<group>"; };
+		E0F401042026081000000004 /* ProtocolPolicyTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProtocolPolicyTests.swift; sourceTree = "<group>"; };
+		E0F401052026081000000005 /* MCPStudioLaunchAgent.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = MCPStudioLaunchAgent.entitlements; sourceTree = "<group>"; };
 		1588051FE3325ED9F5BB9AA7 /* Identity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Identity.swift; sourceTree = "<group>"; };
 		1CDEE7C4AC603739B1782002 /* IdentityConsistencyTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = IdentityConsistencyTests.swift; sourceTree = "<group>"; };
 		315BA1EBB9429AC6CA67EC02 /* org.eof.tools.MCPStudio.LaunchAgent.plist.template */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; path = org.eof.tools.MCPStudio.LaunchAgent.plist.template; sourceTree = "<group>"; };
@@ -74,6 +85,7 @@
 			isa = PBXGroup;
 			children = (
 				1CDEE7C4AC603739B1782002 /* IdentityConsistencyTests.swift */,
+				E0F401042026081000000004 /* ProtocolPolicyTests.swift */,
 			);
 			path = MCPStudioLaunchAgentTests;
 			sourceTree = "<group>";
@@ -107,7 +119,10 @@
 			isa = PBXGroup;
 			children = (
 				1588051FE3325ED9F5BB9AA7 /* Identity.swift */,
+				E0F401012026081000000001 /* MCPStudioLaunchAgentProtocol.swift */,
 				C4FFF0F13533F9E4704794B7 /* MCPStudioLaunchAgentService.swift */,
+				E0F401022026081000000002 /* ProcessExecutionPolicy.swift */,
+				E0F401032026081000000003 /* ProcessJobManager.swift */,
 				5F520E9A95082F5A82B92784 /* main.swift */,
 			);
 			path = MCPStudioLaunchAgent;
@@ -134,6 +149,7 @@
 				900F797C8D59C391F93BF02F /* LaunchAgents */,
 				D268E06DE08483891B24DCDE /* scripts */,
 				D7FDF6C28611AD4E16DB14C1 /* Package.swift */,
+				E0F401052026081000000005 /* MCPStudioLaunchAgent.entitlements */,
 				747A0185E37C2D2EDEC7111E /* README.md */,
 				6732DB721BC9BB284EB9A4D4 /* README-AGENT-DESIGN-DESCISION.md */,
 			);
@@ -237,7 +253,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				16CD724B09556F0BD2CB0147 /* Identity.swift in Sources */,
+				E0F400042026081000000004 /* MCPStudioLaunchAgentProtocol.swift in Sources */,
+				E0F400052026081000000005 /* ProcessExecutionPolicy.swift in Sources */,
 				4E9AD8BD896FA0C344520D10 /* IdentityConsistencyTests.swift in Sources */,
+				E0F400062026081000000006 /* ProtocolPolicyTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -246,7 +265,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				8156CAB77F9D6131A415D68B /* Identity.swift in Sources */,
+				E0F400012026081000000001 /* MCPStudioLaunchAgentProtocol.swift in Sources */,
 				02278F45B42438D5AEE259DE /* MCPStudioLaunchAgentService.swift in Sources */,
+				E0F400022026081000000002 /* ProcessExecutionPolicy.swift in Sources */,
+				E0F400032026081000000003 /* ProcessJobManager.swift in Sources */,
 				E140AEF2C6858EF713CDB915 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -398,6 +420,7 @@
 		683E79F123A3E11696103B58 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = MCPStudioLaunchAgent.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				CURRENT_PROJECT_VERSION = 20260810190602;
@@ -423,6 +446,7 @@
 		97556CA0BF69F0F6BD327577 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = MCPStudioLaunchAgent.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				CURRENT_PROJECT_VERSION = 20260810190602;

@@ -20,21 +20,10 @@
         <true/>
     </dict>
 
-    <!-- Start when the user session begins, restart on crash. -->
-    <key>RunAtLoad</key>
-    <true/>
-    <key>KeepAlive</key>
-    <true/>
+    <!-- MachServices starts the agent on demand. -->
 
-    <!-- User-session agent: interactive QoS tier. -->
+    <!-- User-session agent: adaptive QoS tier. -->
     <key>ProcessType</key>
-    <string>Interactive</string>
-
-    <!-- Fallback logging only; primary logging is os.Logger
-         (visible via Console.app / `log stream`). -->
-    <key>StandardOutPath</key>
-    <string>/tmp/org.eof.tools.MCPStudio.LaunchAgent.out.log</string>
-    <key>StandardErrorPath</key>
-    <string>/tmp/org.eof.tools.MCPStudio.LaunchAgent.err.log</string>
+    <string>Adaptive</string>
 </dict>
 </plist>

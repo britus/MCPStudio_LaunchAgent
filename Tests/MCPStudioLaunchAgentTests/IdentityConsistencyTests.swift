@@ -7,6 +7,7 @@ import XCTest
 final class IdentityConsistencyTests: XCTestCase {
     func testProductIdentityMatchesMCPStudioConventions() {
         XCTAssertEqual(MCPStudioLaunchAgentIdentity.displayName, "EoF MCP Studio Launch Agent")
+        XCTAssertEqual(MCPStudioLaunchAgentIdentity.teamIdentifier, "83NQU389JN")
         XCTAssertEqual(MCPStudioLaunchAgentIdentity.hostApplicationBundleIdentifier, "org.eof.tools.MCPStudio")
         XCTAssertEqual(MCPStudioLaunchAgentIdentity.agentBundleIdentifier, "org.eof.tools.MCPStudio.LaunchAgent")
         XCTAssertEqual(MCPStudioLaunchAgentIdentity.applicationGroupIdentifier, "group.org.eof.apps")
@@ -19,6 +20,12 @@ final class IdentityConsistencyTests: XCTestCase {
                 MCPStudioLaunchAgentIdentity.applicationGroupIdentifier + "."
             )
         )
+        XCTAssertTrue(MCPStudioLaunchAgentIdentity.hostSigningRequirement.contains(
+            MCPStudioLaunchAgentIdentity.hostApplicationBundleIdentifier
+        ))
+        XCTAssertTrue(MCPStudioLaunchAgentIdentity.hostSigningRequirement.contains(
+            MCPStudioLaunchAgentIdentity.teamIdentifier
+        ))
     }
 
     func testLaunchdPropertyListUsesCanonicalIdentifiers() throws {
@@ -32,6 +39,11 @@ final class IdentityConsistencyTests: XCTestCase {
 
         let services = try XCTUnwrap(propertyList["MachServices"] as? [String: Any])
         XCTAssertEqual(Set(services.keys), [MCPStudioLaunchAgentIdentity.machServiceName])
+        XCTAssertNil(propertyList["RunAtLoad"])
+        XCTAssertNil(propertyList["KeepAlive"])
+        XCTAssertEqual(propertyList["ProcessType"] as? String, "Adaptive")
+        XCTAssertNil(propertyList["StandardOutPath"])
+        XCTAssertNil(propertyList["StandardErrorPath"])
     }
 
     private var projectRoot: URL {

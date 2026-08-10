@@ -24,6 +24,7 @@ MCPSTUDIO_WORKSPACE_DIR="$(cd "$ROOT_DIR/.." && pwd)"
 PROJECT_PATH="$ROOT_DIR/MCPStudioLaunchAgent.xcodeproj"
 PACKAGING_DIR="$ROOT_DIR/Packaging"
 PLIST_TEMPLATE="$ROOT_DIR/LaunchAgents/$LAUNCHD_LABEL.plist.template"
+ENTITLEMENTS_PATH="$ROOT_DIR/MCPStudioLaunchAgent.entitlements"
 BUILD_ROOT="$ROOT_DIR/Build/Package"
 DERIVED_DATA_DIR="$BUILD_ROOT/DerivedData"
 INTERMEDIATE_DIR="$BUILD_ROOT/Intermediate"
@@ -198,6 +199,7 @@ done
 
 [[ -d "$PROJECT_PATH" ]] || die "Xcode project not found: $PROJECT_PATH"
 [[ -f "$PLIST_TEMPLATE" ]] || die "LaunchAgent plist template not found: $PLIST_TEMPLATE"
+[[ -f "$ENTITLEMENTS_PATH" ]] || die "LaunchAgent entitlements not found: $ENTITLEMENTS_PATH"
 [[ -f "$PACKAGING_DIR/Distribution.xml" ]] || die "Distribution.xml not found"
 [[ -f "$PACKAGING_DIR/Welcome.html" ]] || die "Welcome.html not found"
 [[ -f "$PACKAGING_DIR/Conclusion.html" ]] || die "Conclusion.html not found"
@@ -310,10 +312,16 @@ done
 if [[ "$UNSIGNED" -eq 0 ]]; then
     echo "Signing Launch Agent with: $APPLICATION_IDENTITY"
     codesign --force --timestamp --options runtime --identifier "$COMPONENT_IDENTIFIER" \
+        --entitlements "$ENTITLEMENTS_PATH" \
         --sign "$APPLICATION_IDENTITY" "$STAGED_BINARY"
     codesign --verify --strict --verbose=2 "$STAGED_BINARY"
     signed_team="$(codesign -d --verbose=4 "$STAGED_BINARY" 2>&1 | sed -n 's/^TeamIdentifier=//p')"
     [[ "$signed_team" == "$TEAM_ID" ]] || die "unexpected signing team: $signed_team"
+    SIGNED_ENTITLEMENTS="$INTERMEDIATE_DIR/Signed-Entitlements.plist"
+    codesign -d --entitlements :- "$STAGED_BINARY" > "$SIGNED_ENTITLEMENTS"
+    signed_app_group="$(plutil -extract 'com.apple.security.application-groups.0' raw -o - "$SIGNED_ENTITLEMENTS")"
+    [[ "$signed_app_group" == "group.org.eof.apps" ]] \
+        || die "signed Launch Agent is missing the expected application group"
 fi
 
 PAYLOAD_BINARY="$PAYLOAD_ROOT${INSTALL_BINARY_PATH}"
