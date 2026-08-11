@@ -318,8 +318,8 @@ if [[ "$UNSIGNED" -eq 0 ]]; then
     signed_team="$(codesign -d --verbose=4 "$STAGED_BINARY" 2>&1 | sed -n 's/^TeamIdentifier=//p')"
     [[ "$signed_team" == "$TEAM_ID" ]] || die "unexpected signing team: $signed_team"
     SIGNED_ENTITLEMENTS="$INTERMEDIATE_DIR/Signed-Entitlements.plist"
-    codesign -d --entitlements :- "$STAGED_BINARY" > "$SIGNED_ENTITLEMENTS"
-    signed_app_group="$(plutil -extract 'com.apple.security.application-groups.0' raw -o - "$SIGNED_ENTITLEMENTS")"
+    codesign -d --entitlements "$SIGNED_ENTITLEMENTS" --xml "$STAGED_BINARY"
+    signed_app_group="$(plutil -extract 'com\.apple\.security\.application-groups.0' raw -o - "$SIGNED_ENTITLEMENTS")"
     [[ "$signed_app_group" == "group.org.eof.apps" ]] \
         || die "signed Launch Agent is missing the expected application group"
 fi
