@@ -20,6 +20,12 @@
         <true/>
     </dict>
 
+	<!-- Show the product name inside macOS settings pane -->
+	<key>AssociatedBundleIdentifiers</key>
+	<array>
+    	<string>org.eof.tools.MCPStudio</string>
+	</array>
+
     <!-- MachServices starts the agent on demand. -->
 
     <!-- User-session agent: adaptive QoS tier. -->
