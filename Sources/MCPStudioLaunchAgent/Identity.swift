@@ -16,8 +16,24 @@ enum MCPStudioLaunchAgentIdentity {
         bundleIdentifier: agentBundleIdentifier
     )
 
-    private static func signingRequirement(bundleIdentifier: String) -> String {
-        "identifier \"\(bundleIdentifier)\" and anchor apple generic " +
-        "and certificate leaf[subject.OU] = \"\(teamIdentifier)\""
+    private static func signingRequirement(
+        bundleIdentifier: String
+    ) -> String {
+        """
+        anchor apple generic and
+        identifier "\(bundleIdentifier)" and
+        (
+            (
+                entitlement["com.apple.developer.team-identifier"] = "\(teamIdentifier)" and
+                entitlement["com.apple.application-identifier"] = "\(teamIdentifier).\(bundleIdentifier)"
+            )
+            or
+            certificate leaf[subject.OU] = "\(teamIdentifier)"
+        )
+        """
     }
+    //private static func signingRequirement(bundleIdentifier: String) -> String {
+    //    "identifier \"\(bundleIdentifier)\" or anchor apple generic " +
+    //    "or certificate leaf[subject.OU] = \"\(teamIdentifier)\""
+    //}
 }
