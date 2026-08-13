@@ -13,11 +13,18 @@ struct MCPStudioProcessPolicyError: Error, Equatable {
     let message: String
 }
 
+struct MCPStudioHostOSCommandPolicy: Equatable {
+    let executableRoots: [String]
+    let commands: Set<String>
+
+    static let empty = MCPStudioHostOSCommandPolicy(executableRoots: [], commands: [])
+}
+
 enum MCPStudioProcessExecutionPolicy {
     static let policyVersion = 1
     static let maximumTimeoutSeconds = 600.0
-    static let maximumOutputBytes = 10 * 1024 * 1024
-    static let maximumInputBytes = 5 * 1024 * 1024
+    static let maximumOutputBytes = 32 * 1024 * 1024
+    static let maximumInputBytes = 65 * 1024 * 1024
     static let maximumInlineSourceBytes = 1024 * 1024
     static let maximumConcurrentJobs = 4
     static let maximumRequestPayloadBytes = 8 * 1024 * 1024
@@ -33,28 +40,9 @@ enum MCPStudioProcessExecutionPolicy {
         "LIBRARY_PATH", "PKG_CONFIG_PATH"
     ]
 
-    private static let supportedDeveloperTools: Set<String> = [
-        "ar", "clang", "clang++", "cmake", "codesign", "gcc", "g++",
-        "git", "ld", "lipo", "make", "ninja", "otool", "pkg-config",
-        "qmake", "security", "swift", "swiftc", "tidy", "xcodebuild", "xcrun"
-    ]
-
-    private static let executableRoots = [
-        "/Applications/Xcode.app/Contents/Developer/usr/bin",
-        "/Applications/Xcode.app/Contents/Developer/Toolchains",
-        "/Library/Developer/CommandLineTools/usr/bin",
-        "/opt/homebrew/bin",
-        "/opt/homebrew/Cellar",
-        "/usr/local/bin",
-        "/usr/local/Cellar",
-        "/opt/local/bin",
-        "/usr/bin",
-        "/bin"
-    ]
-
     static func validate(
         _ request: MCPStudioProcessExecutionRequest,
-        clientAllowedDeveloperTools: Set<String> = []
+        hostOSCommandPolicy: MCPStudioHostOSCommandPolicy = .empty
     ) throws -> MCPStudioValidatedProcessRequest {
         try validateCommonLimits(request)
 
@@ -69,7 +57,8 @@ enum MCPStudioProcessExecutionPolicy {
             let executable = try resolveRuntimeExecutable(
                 hint: request.executableHint,
                 acceptedNames: { $0 == "node" || $0 == "nodejs" },
-                candidates: ["/opt/homebrew/bin/node", "/usr/local/bin/node", "/usr/bin/node"]
+                fallbackNames: ["node", "nodejs"],
+                hostOSCommandPolicy: hostOSCommandPolicy
             )
             let arguments = try runtimeArguments(for: request, inlineFlag: "-e")
             return validated(request, executable, arguments, workingDirectoryURL, environment)
@@ -81,7 +70,8 @@ enum MCPStudioProcessExecutionPolicy {
             let executable = try resolveRuntimeExecutable(
                 hint: request.executableHint,
                 acceptedNames: { $0 == "python" || $0.hasPrefix("python3") },
-                candidates: ["/opt/homebrew/bin/python3", "/usr/local/bin/python3", "/usr/bin/python3"]
+                fallbackNames: ["python3", "python"],
+                hostOSCommandPolicy: hostOSCommandPolicy
             )
             let arguments = try runtimeArguments(for: request, inlineFlag: "-c")
             return validated(request, executable, arguments, workingDirectoryURL, environment)
@@ -98,7 +88,7 @@ enum MCPStudioProcessExecutionPolicy {
             }
             let executable = try validatedDeveloperTool(
                 hint,
-                clientAllowedDeveloperTools: clientAllowedDeveloperTools
+                hostOSCommandPolicy: hostOSCommandPolicy
             )
             return validated(request, executable, request.arguments, workingDirectoryURL, environment)
         }
@@ -188,14 +178,17 @@ enum MCPStudioProcessExecutionPolicy {
     private static func resolveRuntimeExecutable(
         hint: String?,
         acceptedNames: (String) -> Bool,
-        candidates: [String]
+        fallbackNames: [String],
+        hostOSCommandPolicy: MCPStudioHostOSCommandPolicy
     ) throws -> URL {
         if let hint, !hint.isEmpty {
             guard hint.hasPrefix("/") else {
                 throw denied("invalid_runtime", "Runtime executable hints must be absolute paths.")
             }
             let url = canonicalURL(hint)
-            guard acceptedNames(url.lastPathComponent), isAllowedExecutableURL(url) else {
+            guard acceptedNames(url.lastPathComponent),
+                  hostOSCommandPolicy.commands.contains(url.lastPathComponent),
+                  isAllowedExecutableURL(url, roots: hostOSCommandPolicy.executableRoots) else {
                 throw denied("invalid_runtime", "The requested runtime executable is not allowed by the V1 policy.")
             }
             guard FileManager.default.isExecutableFile(atPath: url.path) else {
@@ -204,40 +197,56 @@ enum MCPStudioProcessExecutionPolicy {
             return url
         }
 
-        for candidate in candidates {
-            let url = canonicalURL(candidate)
-            if acceptedNames(url.lastPathComponent),
-               isAllowedExecutableURL(url),
-               FileManager.default.isExecutableFile(atPath: url.path) {
-                return url
+        for root in hostOSCommandPolicy.executableRoots {
+            for name in fallbackNames where hostOSCommandPolicy.commands.contains(name) {
+                let url = canonicalURL(URL(fileURLWithPath: root).appendingPathComponent(name).path)
+                if acceptedNames(url.lastPathComponent),
+                   isAllowedExecutableURL(url, roots: hostOSCommandPolicy.executableRoots),
+                   FileManager.default.isExecutableFile(atPath: url.path) {
+                    return url
+                }
             }
         }
         throw denied("runtime_unavailable", "No allowed runtime executable is available.")
     }
 
-    static func sanitizedDeveloperToolNames(_ names: [String]) -> Set<String> {
-        Set(names.filter { name in
+    static func sanitizedHostOSCommandPolicy(
+        executableRoots: [String],
+        commands: [String]
+    ) -> MCPStudioHostOSCommandPolicy {
+        let sanitizedCommands = Set(commands.filter { name in
             !name.isEmpty
                 && name == name.trimmingCharacters(in: .whitespacesAndNewlines)
                 && name.range(of: "^[A-Za-z0-9_.+-]+$", options: .regularExpression) != nil
-                && supportedDeveloperTools.contains(name)
         })
+        let sanitizedRoots = Array(Set(executableRoots.compactMap { root -> String? in
+            guard root.hasPrefix("/"),
+                  root == root.trimmingCharacters(in: .whitespacesAndNewlines)
+            else {
+                return nil
+            }
+            return URL(fileURLWithPath: root).standardizedFileURL.path
+        })).sorted()
+        return MCPStudioHostOSCommandPolicy(
+            executableRoots: sanitizedRoots,
+            commands: sanitizedCommands
+        )
     }
 
     private static func validatedDeveloperTool(
         _ path: String,
-        clientAllowedDeveloperTools: Set<String>
+        hostOSCommandPolicy: MCPStudioHostOSCommandPolicy
     ) throws -> URL {
         guard path.hasPrefix("/") else {
             throw denied("invalid_executable", "Developer tools must use an absolute executable path.")
         }
         let url = canonicalURL(path)
-        guard supportedDeveloperTools.contains(url.lastPathComponent),
-              clientAllowedDeveloperTools.contains(url.lastPathComponent) else {
-            throw denied("tool_not_allowed", "The executable is not enabled by the negotiated V1 developer-tools policy.")
+        guard hostOSCommandPolicy.commands.contains(url.lastPathComponent) else {
+            throw denied("tool_not_allowed", "The executable is not enabled by the negotiated host OS-command policy.")
         }
-        guard isAllowedExecutableURL(url), FileManager.default.isExecutableFile(atPath: url.path) else {
-            throw denied("invalid_executable", "The developer tool is unavailable or outside an approved toolchain root.")
+        guard isAllowedExecutableURL(url, roots: hostOSCommandPolicy.executableRoots),
+              FileManager.default.isExecutableFile(atPath: url.path) else {
+            throw denied("invalid_executable", "The developer tool is unavailable or outside a host-approved executable root.")
         }
         return url
     }
@@ -270,8 +279,8 @@ enum MCPStudioProcessExecutionPolicy {
         return url
     }
 
-    private static func isAllowedExecutableURL(_ url: URL) -> Bool {
-        executableRoots.contains { contains(url.path, within: $0) }
+    private static func isAllowedExecutableURL(_ url: URL, roots: [String]) -> Bool {
+        roots.contains { contains(url.path, within: $0) }
     }
 
     private static func isAllowedUserURL(_ url: URL) -> Bool {

@@ -5,17 +5,18 @@ import XCTest
 #endif
 
 final class ProtocolPolicyTests: XCTestCase {
-    func testProtocolHandshakeAppliesClientAllowListToSubmittedTidyRequest() throws {
+    func testProtocolHandshakeAppliesHostPolicyToSubmittedTidyRequest() throws {
         let service = MCPStudioLaunchAgentService()
         let helloRequest = MCPStudioAgentClientHello(
             protocolMajor: MCPStudioLaunchAgentProtocolMajor,
-            minimumProtocolMinor: 1,
+            minimumProtocolMinor: 2,
             maximumProtocolMinor: MCPStudioLaunchAgentProtocolMinor,
             clientVersion: "test",
             clientBuild: "1",
             clientInstanceID: UUID(),
             requestedCapabilities: [.developerTools],
-            allowedDeveloperTools: ["tidy"]
+            allowedExecutableRoots: ["/usr/bin"],
+            allowedCommands: ["tidy"]
         )
 
         var helloData = Data()
@@ -27,7 +28,9 @@ final class ProtocolPolicyTests: XCTestCase {
             from: helloData
         )
         XCTAssertTrue(hello.accepted)
-        XCTAssertEqual(hello.protocolMinor, 1)
+        XCTAssertEqual(hello.protocolMinor, 2)
+        XCTAssertEqual(hello.allowedExecutableRoots, ["/usr/bin"])
+        XCTAssertEqual(hello.allowedCommands, ["tidy"])
 
         let request = developerToolRequest(executable: "/usr/bin/tidy")
         var acceptedData = Data()
@@ -117,17 +120,20 @@ final class ProtocolPolicyTests: XCTestCase {
             outputLimitBytes: 1024
         )
 
-        XCTAssertThrowsError(try MCPStudioProcessExecutionPolicy.validate(request)) { error in
+        XCTAssertThrowsError(try MCPStudioProcessExecutionPolicy.validate(
+            request,
+            hostOSCommandPolicy: hostPolicy(commands: ["tidy"], roots: ["/usr/bin"])
+        )) { error in
             XCTAssertEqual((error as? MCPStudioProcessPolicyError)?.code, "tool_not_allowed")
         }
     }
 
-    func testDeveloperToolPolicyUsesNegotiatedClientAllowListForTidy() throws {
+    func testDeveloperToolPolicyUsesNegotiatedHostPolicyForTidy() throws {
         let request = developerToolRequest(executable: "/usr/bin/tidy")
 
         let validated = try MCPStudioProcessExecutionPolicy.validate(
             request,
-            clientAllowedDeveloperTools: ["tidy"]
+            hostOSCommandPolicy: hostPolicy(commands: ["tidy"], roots: ["/usr/bin"])
         )
 
         XCTAssertEqual(validated.executableURL.path, "/usr/bin/tidy")
@@ -138,18 +144,20 @@ final class ProtocolPolicyTests: XCTestCase {
 
         XCTAssertThrowsError(try MCPStudioProcessExecutionPolicy.validate(
             request,
-            clientAllowedDeveloperTools: ["xcodebuild"]
+            hostOSCommandPolicy: hostPolicy(commands: ["xcodebuild"], roots: ["/usr/bin"])
         )) { error in
             XCTAssertEqual((error as? MCPStudioProcessPolicyError)?.code, "tool_not_allowed")
         }
     }
 
-    func testNegotiatedDeveloperToolsAreLimitedToSupportedSafeCatalog() {
-        let names = MCPStudioProcessExecutionPolicy.sanitizedDeveloperToolNames([
-            "tidy", "xcodebuild", "sh", "bad command", "/usr/bin/git"
-        ])
+    func testNegotiatedPolicyUsesOnlyStructurallyValidHostValues() {
+        let policy = MCPStudioProcessExecutionPolicy.sanitizedHostOSCommandPolicy(
+            executableRoots: ["/usr/bin", "relative/bin"],
+            commands: ["tidy", "sh", "bad command", "/usr/bin/git"]
+        )
 
-        XCTAssertEqual(names, ["tidy", "xcodebuild"])
+        XCTAssertEqual(policy.executableRoots, ["/usr/bin"])
+        XCTAssertEqual(policy.commands, ["sh", "tidy"])
     }
 
     func testPolicyRejectsSensitiveWorkingDirectory() {
@@ -193,7 +201,10 @@ final class ProtocolPolicyTests: XCTestCase {
             outputLimitBytes: 1024
         )
 
-        let validated = try MCPStudioProcessExecutionPolicy.validate(request)
+        let validated = try MCPStudioProcessExecutionPolicy.validate(
+            request,
+            hostOSCommandPolicy: hostPolicy(commands: ["python3"], roots: ["/usr/bin"])
+        )
         XCTAssertEqual(validated.arguments, ["-c", "print('ok')", "one"])
     }
 
@@ -219,7 +230,13 @@ final class ProtocolPolicyTests: XCTestCase {
             outputLimitBytes: 1024
         )
 
-        let validated = try MCPStudioProcessExecutionPolicy.validate(request)
+        let validated = try MCPStudioProcessExecutionPolicy.validate(
+            request,
+            hostOSCommandPolicy: hostPolicy(
+                commands: ["node"],
+                roots: ["/opt/homebrew/bin", "/opt/homebrew/Cellar"]
+            )
+        )
         XCTAssertTrue(validated.executableURL.path.contains("/opt/homebrew/Cellar/node/"))
     }
 
@@ -227,7 +244,10 @@ final class ProtocolPolicyTests: XCTestCase {
         let manager = MCPStudioProcessJobManager()
         let request = pythonRequest(source: "print('agent-ok')", timeout: 10)
 
-        XCTAssertTrue(manager.submit(request).accepted)
+        XCTAssertTrue(manager.submit(
+            request,
+            hostOSCommandPolicy: hostPolicy(commands: ["python3"], roots: ["/usr/bin"])
+        ).accepted)
         let result = try waitForResult(requestID: request.requestID, manager: manager)
 
         XCTAssertTrue(result.succeeded)
@@ -239,7 +259,10 @@ final class ProtocolPolicyTests: XCTestCase {
         let manager = MCPStudioProcessJobManager()
         let request = pythonRequest(source: "import time; time.sleep(3)", timeout: 1)
 
-        XCTAssertTrue(manager.submit(request).accepted)
+        XCTAssertTrue(manager.submit(
+            request,
+            hostOSCommandPolicy: hostPolicy(commands: ["python3"], roots: ["/usr/bin"])
+        ).accepted)
         let result = try waitForResult(requestID: request.requestID, manager: manager)
 
         XCTAssertEqual(result.terminationReason, .timedOut)
@@ -252,11 +275,17 @@ final class ProtocolPolicyTests: XCTestCase {
 
         for _ in 0..<MCPStudioProcessExecutionPolicy.maximumConcurrentJobs {
             let request = pythonRequest(source: "import time; time.sleep(3)", timeout: 10)
-            XCTAssertTrue(manager.submit(request).accepted)
+            XCTAssertTrue(manager.submit(
+                request,
+                hostOSCommandPolicy: hostPolicy(commands: ["python3"], roots: ["/usr/bin"])
+            ).accepted)
             acceptedRequestIDs.append(request.requestID)
         }
 
-        let rejected = manager.submit(pythonRequest(source: "print('too-many')", timeout: 10))
+        let rejected = manager.submit(
+            pythonRequest(source: "print('too-many')", timeout: 10),
+            hostOSCommandPolicy: hostPolicy(commands: ["python3"], roots: ["/usr/bin"])
+        )
         XCTAssertFalse(rejected.accepted)
         XCTAssertEqual(rejected.errorCode, "agent_busy")
 
@@ -282,6 +311,10 @@ final class ProtocolPolicyTests: XCTestCase {
             timeoutSeconds: timeout,
             outputLimitBytes: 1024 * 1024
         )
+    }
+
+    private func hostPolicy(commands: Set<String>, roots: [String]) -> MCPStudioHostOSCommandPolicy {
+        MCPStudioHostOSCommandPolicy(executableRoots: roots, commands: commands)
     }
 
     private func developerToolRequest(executable: String) -> MCPStudioProcessExecutionRequest {

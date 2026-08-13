@@ -72,13 +72,13 @@ final class MCPStudioProcessJobManager: @unchecked Sendable {
 
     func submit(
         _ request: MCPStudioProcessExecutionRequest,
-        clientAllowedDeveloperTools: Set<String> = []
+        hostOSCommandPolicy: MCPStudioHostOSCommandPolicy = .empty
     ) -> MCPStudioProcessJobAccepted {
         let validated: MCPStudioValidatedProcessRequest
         do {
             validated = try MCPStudioProcessExecutionPolicy.validate(
                 request,
-                clientAllowedDeveloperTools: clientAllowedDeveloperTools
+                hostOSCommandPolicy: hostOSCommandPolicy
             )
         } catch let error as MCPStudioProcessPolicyError {
             return MCPStudioProcessJobAccepted(

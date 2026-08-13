@@ -8,7 +8,7 @@ final class MCPStudioLaunchAgentService: NSObject, MCPStudioLaunchAgentProtocol 
     private let jobManager: MCPStudioProcessJobManager
     private let agentInstanceID: UUID
     private var negotiatedProtocolMinor: Int?
-    private var clientAllowedDeveloperTools: Set<String> = []
+    private var hostOSCommandPolicy: MCPStudioHostOSCommandPolicy = .empty
     private let logger = Logger(
         subsystem: MCPStudioLaunchAgentIdentity.agentBundleIdentifier,
         category: "service"
@@ -60,26 +60,33 @@ final class MCPStudioLaunchAgentService: NSObject, MCPStudioLaunchAgentProtocol 
             return
         }
 
-        guard negotiatedMinor >= 1, let configuredTools = clientHello.allowedDeveloperTools else {
+        guard negotiatedMinor >= 2,
+              let configuredRoots = clientHello.allowedExecutableRoots,
+              let configuredCommands = clientHello.allowedCommands else {
             reply(MCPStudioLaunchAgentWireCodec.encode(agentHello(
                 accepted: false,
                 protocolMinor: negotiatedMinor,
-                message: "Protocol 1.1 requires the client developer-tools allowlist."
+                message: "Protocol 1.2 requires the host executable-roots and command allowlists."
             )))
             return
         }
 
-        let sanitizedTools = MCPStudioProcessExecutionPolicy.sanitizedDeveloperToolNames(configuredTools)
+        let sanitizedPolicy = MCPStudioProcessExecutionPolicy.sanitizedHostOSCommandPolicy(
+            executableRoots: configuredRoots,
+            commands: configuredCommands
+        )
 
         lock.lock()
         negotiatedProtocolMinor = negotiatedMinor
-        clientAllowedDeveloperTools = sanitizedTools
+        hostOSCommandPolicy = sanitizedPolicy
         lock.unlock()
 
         logger.info("Negotiated protocol 1.\(negotiatedMinor, privacy: .public) with client instance \(clientHello.clientInstanceID.uuidString, privacy: .public).")
         reply(MCPStudioLaunchAgentWireCodec.encode(agentHello(
             accepted: true,
             protocolMinor: negotiatedMinor,
+            allowedExecutableRoots: sanitizedPolicy.executableRoots,
+            allowedCommands: sanitizedPolicy.commands.sorted(),
             message: nil
         )))
     }
@@ -128,11 +135,11 @@ final class MCPStudioLaunchAgentService: NSObject, MCPStudioLaunchAgentProtocol 
         }
 
         lock.lock()
-        let allowedTools = clientAllowedDeveloperTools
+        let policy = hostOSCommandPolicy
         lock.unlock()
         reply(MCPStudioLaunchAgentWireCodec.encode(jobManager.submit(
             executionRequest,
-            clientAllowedDeveloperTools: allowedTools
+            hostOSCommandPolicy: policy
         )))
     }
 
@@ -168,7 +175,13 @@ final class MCPStudioLaunchAgentService: NSObject, MCPStudioLaunchAgentProtocol 
         return negotiatedProtocolMinor != nil
     }
 
-    private func agentHello(accepted: Bool, protocolMinor: Int, message: String?) -> MCPStudioAgentHello {
+    private func agentHello(
+        accepted: Bool,
+        protocolMinor: Int,
+        allowedExecutableRoots: [String] = [],
+        allowedCommands: [String] = [],
+        message: String?
+    ) -> MCPStudioAgentHello {
         let info = Bundle.main.infoDictionary ?? [:]
         return MCPStudioAgentHello(
             accepted: accepted,
@@ -178,6 +191,8 @@ final class MCPStudioLaunchAgentService: NSObject, MCPStudioLaunchAgentProtocol 
             agentBuild: info["CFBundleVersion"] as? String ?? "unknown",
             agentInstanceID: agentInstanceID,
             capabilities: MCPStudioLaunchAgentCapability.allCases,
+            allowedExecutableRoots: allowedExecutableRoots,
+            allowedCommands: allowedCommands,
             policyVersion: MCPStudioProcessExecutionPolicy.policyVersion,
             maximumTimeoutSeconds: MCPStudioProcessExecutionPolicy.maximumTimeoutSeconds,
             maximumOutputBytes: MCPStudioProcessExecutionPolicy.maximumOutputBytes,
