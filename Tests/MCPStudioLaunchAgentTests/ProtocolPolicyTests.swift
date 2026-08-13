@@ -5,6 +5,62 @@ import XCTest
 #endif
 
 final class ProtocolPolicyTests: XCTestCase {
+    func testProtocolHandshakeAppliesClientAllowListToSubmittedTidyRequest() throws {
+        let service = MCPStudioLaunchAgentService()
+        let helloRequest = MCPStudioAgentClientHello(
+            protocolMajor: MCPStudioLaunchAgentProtocolMajor,
+            minimumProtocolMinor: 1,
+            maximumProtocolMinor: MCPStudioLaunchAgentProtocolMinor,
+            clientVersion: "test",
+            clientBuild: "1",
+            clientInstanceID: UUID(),
+            requestedCapabilities: [.developerTools],
+            allowedDeveloperTools: ["tidy"]
+        )
+
+        var helloData = Data()
+        service.hello(MCPStudioLaunchAgentWireCodec.encode(helloRequest)) {
+            helloData = $0
+        }
+        let hello = try MCPStudioLaunchAgentWireCodec.decode(
+            MCPStudioAgentHello.self,
+            from: helloData
+        )
+        XCTAssertTrue(hello.accepted)
+        XCTAssertEqual(hello.protocolMinor, 1)
+
+        let request = developerToolRequest(executable: "/usr/bin/tidy")
+        var acceptedData = Data()
+        service.submit(MCPStudioLaunchAgentWireCodec.encode(request)) {
+            acceptedData = $0
+        }
+        let accepted = try MCPStudioLaunchAgentWireCodec.decode(
+            MCPStudioProcessJobAccepted.self,
+            from: acceptedData
+        )
+
+        XCTAssertTrue(accepted.accepted)
+        let deadline = Date().addingTimeInterval(5)
+        var executionResult: MCPStudioProcessExecutionResult?
+        while Date() < deadline, executionResult == nil {
+            var statusData = Data()
+            service.status(accepted.requestID.uuidString) {
+                statusData = $0
+            }
+            let status = try MCPStudioLaunchAgentWireCodec.decode(
+                MCPStudioProcessJobStatus.self,
+                from: statusData
+            )
+            executionResult = status.result
+            if executionResult == nil {
+                Thread.sleep(forTimeInterval: 0.02)
+            }
+        }
+
+        XCTAssertEqual(executionResult?.resolvedExecutable, "/usr/bin/tidy")
+        XCTAssertEqual(executionResult?.terminationReason, .exited)
+    }
+
     func testProtocolRequestRoundTripsThroughWireCodec() throws {
         let request = MCPStudioProcessExecutionRequest(
             requestID: UUID(),
@@ -64,6 +120,36 @@ final class ProtocolPolicyTests: XCTestCase {
         XCTAssertThrowsError(try MCPStudioProcessExecutionPolicy.validate(request)) { error in
             XCTAssertEqual((error as? MCPStudioProcessPolicyError)?.code, "tool_not_allowed")
         }
+    }
+
+    func testDeveloperToolPolicyUsesNegotiatedClientAllowListForTidy() throws {
+        let request = developerToolRequest(executable: "/usr/bin/tidy")
+
+        let validated = try MCPStudioProcessExecutionPolicy.validate(
+            request,
+            clientAllowedDeveloperTools: ["tidy"]
+        )
+
+        XCTAssertEqual(validated.executableURL.path, "/usr/bin/tidy")
+    }
+
+    func testDeveloperToolPolicyRejectsTidyWhenClientDisablesIt() {
+        let request = developerToolRequest(executable: "/usr/bin/tidy")
+
+        XCTAssertThrowsError(try MCPStudioProcessExecutionPolicy.validate(
+            request,
+            clientAllowedDeveloperTools: ["xcodebuild"]
+        )) { error in
+            XCTAssertEqual((error as? MCPStudioProcessPolicyError)?.code, "tool_not_allowed")
+        }
+    }
+
+    func testNegotiatedDeveloperToolsAreLimitedToSupportedSafeCatalog() {
+        let names = MCPStudioProcessExecutionPolicy.sanitizedDeveloperToolNames([
+            "tidy", "xcodebuild", "sh", "bad command", "/usr/bin/git"
+        ])
+
+        XCTAssertEqual(names, ["tidy", "xcodebuild"])
     }
 
     func testPolicyRejectsSensitiveWorkingDirectory() {
@@ -195,6 +281,25 @@ final class ProtocolPolicyTests: XCTestCase {
             standardInput: nil,
             timeoutSeconds: timeout,
             outputLimitBytes: 1024 * 1024
+        )
+    }
+
+    private func developerToolRequest(executable: String) -> MCPStudioProcessExecutionRequest {
+        MCPStudioProcessExecutionRequest(
+            requestID: UUID(),
+            conversationID: "conversation",
+            toolID: "org.eof.tests.developer-tool",
+            policyProfileID: "developer.tools.v1",
+            runtime: .developerTool,
+            executableHint: executable,
+            sourceKind: .none,
+            source: nil,
+            arguments: ["-v"],
+            workingDirectory: NSHomeDirectory(),
+            environment: [:],
+            standardInput: nil,
+            timeoutSeconds: 30,
+            outputLimitBytes: 1024
         )
     }
 

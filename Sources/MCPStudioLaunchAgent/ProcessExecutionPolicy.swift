@@ -33,10 +33,10 @@ enum MCPStudioProcessExecutionPolicy {
         "LIBRARY_PATH", "PKG_CONFIG_PATH"
     ]
 
-    private static let allowedDeveloperTools: Set<String> = [
+    private static let supportedDeveloperTools: Set<String> = [
         "ar", "clang", "clang++", "cmake", "codesign", "gcc", "g++",
         "git", "ld", "lipo", "make", "ninja", "otool", "pkg-config",
-        "qmake", "security", "swift", "swiftc", "xcodebuild", "xcrun"
+        "qmake", "security", "swift", "swiftc", "tidy", "xcodebuild", "xcrun"
     ]
 
     private static let executableRoots = [
@@ -52,7 +52,10 @@ enum MCPStudioProcessExecutionPolicy {
         "/bin"
     ]
 
-    static func validate(_ request: MCPStudioProcessExecutionRequest) throws -> MCPStudioValidatedProcessRequest {
+    static func validate(
+        _ request: MCPStudioProcessExecutionRequest,
+        clientAllowedDeveloperTools: Set<String> = []
+    ) throws -> MCPStudioValidatedProcessRequest {
         try validateCommonLimits(request)
 
         let workingDirectoryURL = try validatedWorkingDirectory(request.workingDirectory)
@@ -93,7 +96,10 @@ enum MCPStudioProcessExecutionPolicy {
             guard let hint = request.executableHint, !hint.isEmpty else {
                 throw denied("missing_executable", "A developer-tool request requires an absolute executable path.")
             }
-            let executable = try validatedDeveloperTool(hint)
+            let executable = try validatedDeveloperTool(
+                hint,
+                clientAllowedDeveloperTools: clientAllowedDeveloperTools
+            )
             return validated(request, executable, request.arguments, workingDirectoryURL, environment)
         }
     }
@@ -209,13 +215,26 @@ enum MCPStudioProcessExecutionPolicy {
         throw denied("runtime_unavailable", "No allowed runtime executable is available.")
     }
 
-    private static func validatedDeveloperTool(_ path: String) throws -> URL {
+    static func sanitizedDeveloperToolNames(_ names: [String]) -> Set<String> {
+        Set(names.filter { name in
+            !name.isEmpty
+                && name == name.trimmingCharacters(in: .whitespacesAndNewlines)
+                && name.range(of: "^[A-Za-z0-9_.+-]+$", options: .regularExpression) != nil
+                && supportedDeveloperTools.contains(name)
+        })
+    }
+
+    private static func validatedDeveloperTool(
+        _ path: String,
+        clientAllowedDeveloperTools: Set<String>
+    ) throws -> URL {
         guard path.hasPrefix("/") else {
             throw denied("invalid_executable", "Developer tools must use an absolute executable path.")
         }
         let url = canonicalURL(path)
-        guard allowedDeveloperTools.contains(url.lastPathComponent) else {
-            throw denied("tool_not_allowed", "The executable is not part of the V1 developer-tools allowlist.")
+        guard supportedDeveloperTools.contains(url.lastPathComponent),
+              clientAllowedDeveloperTools.contains(url.lastPathComponent) else {
+            throw denied("tool_not_allowed", "The executable is not enabled by the negotiated V1 developer-tools policy.")
         }
         guard isAllowedExecutableURL(url), FileManager.default.isExecutableFile(atPath: url.path) else {
             throw denied("invalid_executable", "The developer tool is unavailable or outside an approved toolchain root.")

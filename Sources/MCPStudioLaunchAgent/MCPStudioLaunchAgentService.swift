@@ -8,6 +8,7 @@ final class MCPStudioLaunchAgentService: NSObject, MCPStudioLaunchAgentProtocol 
     private let jobManager: MCPStudioProcessJobManager
     private let agentInstanceID: UUID
     private var negotiatedProtocolMinor: Int?
+    private var clientAllowedDeveloperTools: Set<String> = []
     private let logger = Logger(
         subsystem: MCPStudioLaunchAgentIdentity.agentBundleIdentifier,
         category: "service"
@@ -59,8 +60,20 @@ final class MCPStudioLaunchAgentService: NSObject, MCPStudioLaunchAgentProtocol 
             return
         }
 
+        guard negotiatedMinor >= 1, let configuredTools = clientHello.allowedDeveloperTools else {
+            reply(MCPStudioLaunchAgentWireCodec.encode(agentHello(
+                accepted: false,
+                protocolMinor: negotiatedMinor,
+                message: "Protocol 1.1 requires the client developer-tools allowlist."
+            )))
+            return
+        }
+
+        let sanitizedTools = MCPStudioProcessExecutionPolicy.sanitizedDeveloperToolNames(configuredTools)
+
         lock.lock()
         negotiatedProtocolMinor = negotiatedMinor
+        clientAllowedDeveloperTools = sanitizedTools
         lock.unlock()
 
         logger.info("Negotiated protocol 1.\(negotiatedMinor, privacy: .public) with client instance \(clientHello.clientInstanceID.uuidString, privacy: .public).")
@@ -114,7 +127,13 @@ final class MCPStudioLaunchAgentService: NSObject, MCPStudioLaunchAgentProtocol 
             return
         }
 
-        reply(MCPStudioLaunchAgentWireCodec.encode(jobManager.submit(executionRequest)))
+        lock.lock()
+        let allowedTools = clientAllowedDeveloperTools
+        lock.unlock()
+        reply(MCPStudioLaunchAgentWireCodec.encode(jobManager.submit(
+            executionRequest,
+            clientAllowedDeveloperTools: allowedTools
+        )))
     }
 
     func status(_ requestID: String, withReply reply: @escaping (Data) -> Void) {

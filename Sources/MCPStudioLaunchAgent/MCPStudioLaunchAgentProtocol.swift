@@ -1,7 +1,7 @@
 import Foundation
 
 let MCPStudioLaunchAgentProtocolMajor = 1
-let MCPStudioLaunchAgentProtocolMinor = 0
+let MCPStudioLaunchAgentProtocolMinor = 1
 
 enum MCPStudioLaunchAgentCapability: String, Codable, CaseIterable {
     case nodeRuntime = "runtime.node"
@@ -47,6 +47,7 @@ struct MCPStudioAgentClientHello: Codable, Equatable {
     let clientBuild: String
     let clientInstanceID: UUID
     let requestedCapabilities: [MCPStudioLaunchAgentCapability]
+    let allowedDeveloperTools: [String]?
 }
 
 struct MCPStudioAgentHello: Codable, Equatable {

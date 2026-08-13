@@ -70,10 +70,16 @@ final class MCPStudioProcessJobManager: @unchecked Sendable {
     private var jobs: [UUID: JobRecord] = [:]
     private let resultRetentionInterval: TimeInterval = 5 * 60
 
-    func submit(_ request: MCPStudioProcessExecutionRequest) -> MCPStudioProcessJobAccepted {
+    func submit(
+        _ request: MCPStudioProcessExecutionRequest,
+        clientAllowedDeveloperTools: Set<String> = []
+    ) -> MCPStudioProcessJobAccepted {
         let validated: MCPStudioValidatedProcessRequest
         do {
-            validated = try MCPStudioProcessExecutionPolicy.validate(request)
+            validated = try MCPStudioProcessExecutionPolicy.validate(
+                request,
+                clientAllowedDeveloperTools: clientAllowedDeveloperTools
+            )
         } catch let error as MCPStudioProcessPolicyError {
             return MCPStudioProcessJobAccepted(
                 accepted: false,
