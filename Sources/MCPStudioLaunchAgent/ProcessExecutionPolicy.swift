@@ -18,6 +18,12 @@ struct MCPStudioHostOSCommandPolicy: Equatable {
     let commands: Set<String>
 
     static let empty = MCPStudioHostOSCommandPolicy(executableRoots: [], commands: [])
+
+    func allowsExecutableName(_ executableName: String) -> Bool {
+        commands.contains(executableName) || commands.contains { rule in
+            rule.hasSuffix("*") && executableName.hasPrefix(String(rule.dropLast()))
+        }
+    }
 }
 
 enum MCPStudioProcessExecutionPolicy {
@@ -56,7 +62,7 @@ enum MCPStudioProcessExecutionPolicy {
             }
             let executable = try resolveRuntimeExecutable(
                 hint: request.executableHint,
-                acceptedNames: { $0 == "node" || $0 == "nodejs" },
+                acceptedNames: { $0.hasPrefix("node") },
                 fallbackNames: ["node", "nodejs"],
                 hostOSCommandPolicy: hostOSCommandPolicy
             )
@@ -69,7 +75,7 @@ enum MCPStudioProcessExecutionPolicy {
             }
             let executable = try resolveRuntimeExecutable(
                 hint: request.executableHint,
-                acceptedNames: { $0 == "python" || $0.hasPrefix("python3") },
+                acceptedNames: { $0.hasPrefix("python") },
                 fallbackNames: ["python3", "python"],
                 hostOSCommandPolicy: hostOSCommandPolicy
             )
@@ -187,7 +193,7 @@ enum MCPStudioProcessExecutionPolicy {
             }
             let url = canonicalURL(hint)
             guard acceptedNames(url.lastPathComponent),
-                  hostOSCommandPolicy.commands.contains(url.lastPathComponent),
+                  hostOSCommandPolicy.allowsExecutableName(url.lastPathComponent),
                   isAllowedExecutableURL(url, roots: hostOSCommandPolicy.executableRoots) else {
                 throw denied("invalid_runtime", "The requested runtime executable is not allowed by the V1 policy.")
             }
@@ -198,7 +204,7 @@ enum MCPStudioProcessExecutionPolicy {
         }
 
         for root in hostOSCommandPolicy.executableRoots {
-            for name in fallbackNames where hostOSCommandPolicy.commands.contains(name) {
+            for name in fallbackNames where hostOSCommandPolicy.allowsExecutableName(name) {
                 let url = canonicalURL(URL(fileURLWithPath: root).appendingPathComponent(name).path)
                 if acceptedNames(url.lastPathComponent),
                    isAllowedExecutableURL(url, roots: hostOSCommandPolicy.executableRoots),
@@ -217,7 +223,7 @@ enum MCPStudioProcessExecutionPolicy {
         let sanitizedCommands = Set(commands.filter { name in
             !name.isEmpty
                 && name == name.trimmingCharacters(in: .whitespacesAndNewlines)
-                && name.range(of: "^[A-Za-z0-9_.+-]+$", options: .regularExpression) != nil
+                && name.range(of: "^[A-Za-z0-9_.+-]+\\*?$", options: .regularExpression) != nil
         })
         let sanitizedRoots = Array(Set(executableRoots.compactMap { root -> String? in
             guard root.hasPrefix("/"),
@@ -241,7 +247,7 @@ enum MCPStudioProcessExecutionPolicy {
             throw denied("invalid_executable", "Developer tools must use an absolute executable path.")
         }
         let url = canonicalURL(path)
-        guard hostOSCommandPolicy.commands.contains(url.lastPathComponent) else {
+        guard hostOSCommandPolicy.allowsExecutableName(url.lastPathComponent) else {
             throw denied("tool_not_allowed", "The executable is not enabled by the negotiated host OS-command policy.")
         }
         guard isAllowedExecutableURL(url, roots: hostOSCommandPolicy.executableRoots),

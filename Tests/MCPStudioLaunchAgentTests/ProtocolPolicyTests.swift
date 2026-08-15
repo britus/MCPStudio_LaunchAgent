@@ -153,11 +153,11 @@ final class ProtocolPolicyTests: XCTestCase {
     func testNegotiatedPolicyUsesOnlyStructurallyValidHostValues() {
         let policy = MCPStudioProcessExecutionPolicy.sanitizedHostOSCommandPolicy(
             executableRoots: ["/usr/bin", "relative/bin"],
-            commands: ["tidy", "sh", "bad command", "/usr/bin/git"]
+            commands: ["tidy", "sh", "gcc-3*", "*", "bad command", "/usr/bin/git"]
         )
 
         XCTAssertEqual(policy.executableRoots, ["/usr/bin"])
-        XCTAssertEqual(policy.commands, ["sh", "tidy"])
+        XCTAssertEqual(policy.commands, ["gcc-3*", "sh", "tidy"])
     }
 
     func testPolicyRejectsSensitiveWorkingDirectory() {
@@ -206,6 +206,67 @@ final class ProtocolPolicyTests: XCTestCase {
             hostOSCommandPolicy: hostPolicy(commands: ["python3"], roots: ["/usr/bin"])
         )
         XCTAssertEqual(validated.arguments, ["-c", "print('ok')", "one"])
+    }
+
+    func testPython3CommandAllowsVersionedCanonicalSymlinkTarget() throws {
+        let root = FileManager.default.temporaryDirectory
+            .appendingPathComponent("PythonPolicyTests-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+
+        let versionedExecutable = root.appendingPathComponent("python3.16")
+        XCTAssertTrue(FileManager.default.createFile(atPath: versionedExecutable.path, contents: Data()))
+        try FileManager.default.setAttributes(
+            [.posixPermissions: 0o755],
+            ofItemAtPath: versionedExecutable.path
+        )
+        let python3Link = root.appendingPathComponent("python3")
+        try FileManager.default.createSymbolicLink(at: python3Link, withDestinationURL: versionedExecutable)
+
+        let request = MCPStudioProcessExecutionRequest(
+            requestID: UUID(),
+            conversationID: "conversation",
+            toolID: "org.eof.tests.python",
+            policyProfileID: "runtime.python.v1",
+            runtime: .python,
+            executableHint: python3Link.path,
+            sourceKind: .inline,
+            source: "print('ok')",
+            arguments: [],
+            workingDirectory: NSHomeDirectory(),
+            environment: [:],
+            standardInput: nil,
+            timeoutSeconds: 30,
+            outputLimitBytes: 1024
+        )
+
+        let validated = try MCPStudioProcessExecutionPolicy.validate(
+            request,
+            hostOSCommandPolicy: hostPolicy(commands: ["python3*"], roots: [root.path])
+        )
+
+        XCTAssertEqual(validated.executableURL.lastPathComponent, "python3.16")
+    }
+
+    func testExplicitPrefixRuleAllowsVersionedDeveloperToolName() throws {
+        let root = FileManager.default.temporaryDirectory
+            .appendingPathComponent("CommandPrefixPolicyTests-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+
+        let executable = root.appendingPathComponent("gcc-3.21-2x")
+        XCTAssertTrue(FileManager.default.createFile(atPath: executable.path, contents: Data()))
+        try FileManager.default.setAttributes(
+            [.posixPermissions: 0o755],
+            ofItemAtPath: executable.path
+        )
+
+        let validated = try MCPStudioProcessExecutionPolicy.validate(
+            developerToolRequest(executable: executable.path),
+            hostOSCommandPolicy: hostPolicy(commands: ["gcc-3*"], roots: [root.path])
+        )
+
+        XCTAssertEqual(validated.executableURL.lastPathComponent, "gcc-3.21-2x")
     }
 
     func testHomebrewRuntimeSymlinkRemainsWithinApprovedInstallationRoot() throws {
