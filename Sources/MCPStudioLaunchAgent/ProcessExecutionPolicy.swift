@@ -27,8 +27,8 @@ struct MCPStudioHostOSCommandPolicy: Equatable {
 }
 
 enum MCPStudioProcessExecutionPolicy {
-    static let policyVersion = 1
-    static let maximumTimeoutSeconds = 600.0
+    static let policyVersion = 2
+    static let maximumTimeoutSeconds = 24 * 60 * 60.0
     static let maximumOutputBytes = 32 * 1024 * 1024
     static let maximumInputBytes = 65 * 1024 * 1024
     static let maximumInlineSourceBytes = 1024 * 1024
@@ -149,7 +149,10 @@ enum MCPStudioProcessExecutionPolicy {
             throw denied("environment_too_large", "The request environment exceeds the V1 entry limit.")
         }
         guard (1...maximumTimeoutSeconds).contains(request.timeoutSeconds) else {
-            throw denied("invalid_timeout", "The timeout must be between 1 and 600 seconds.")
+            throw denied(
+                "invalid_timeout",
+                "The timeout must be between 1 and \(Int(maximumTimeoutSeconds)) seconds."
+            )
         }
         guard (1...maximumOutputBytes).contains(request.outputLimitBytes) else {
             throw denied("invalid_output_limit", "The output limit exceeds the V1 policy.")

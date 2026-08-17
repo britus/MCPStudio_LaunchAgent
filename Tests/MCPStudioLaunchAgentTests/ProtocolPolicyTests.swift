@@ -5,6 +5,17 @@ import XCTest
 #endif
 
 final class ProtocolPolicyTests: XCTestCase {
+    func testPolicyAllowsTwentyFourHourTimeout() throws {
+        XCTAssertEqual(MCPStudioProcessExecutionPolicy.policyVersion, 2)
+        XCTAssertEqual(MCPStudioProcessExecutionPolicy.maximumTimeoutSeconds, 86_400)
+
+        let request = pythonRequest(source: "print('slow-hardware')", timeout: 86_400)
+        _ = try MCPStudioProcessExecutionPolicy.validate(
+            request,
+            hostOSCommandPolicy: hostPolicy(commands: ["python3"], roots: ["/usr/bin"])
+        )
+    }
+
     func testProtocolHandshakeAppliesHostPolicyToSubmittedTidyRequest() throws {
         let service = MCPStudioLaunchAgentService()
         let helloRequest = MCPStudioAgentClientHello(
