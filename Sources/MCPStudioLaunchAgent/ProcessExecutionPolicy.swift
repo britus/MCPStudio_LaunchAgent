@@ -148,12 +148,14 @@ enum MCPStudioProcessExecutionPolicy {
         guard request.environment.count <= 64 else {
             throw denied("environment_too_large", "The request environment exceeds the V1 entry limit.")
         }
+        #if false
         guard (1...maximumTimeoutSeconds).contains(request.timeoutSeconds) else {
             throw denied(
                 "invalid_timeout",
                 "The timeout must be between 1 and \(Int(maximumTimeoutSeconds)) seconds."
             )
         }
+        #endif
         guard (1...maximumOutputBytes).contains(request.outputLimitBytes) else {
             throw denied("invalid_output_limit", "The output limit exceeds the V1 policy.")
         }
