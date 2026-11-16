@@ -25,7 +25,7 @@ final class MCPStudioLaunchAgentService: NSObject, MCPStudioLaunchAgentProtocol 
             reply(MCPStudioLaunchAgentWireCodec.encode(agentHello(
                 accepted: false,
                 protocolMinor: MCPStudioLaunchAgentProtocolMinor,
-                message: "The client hello payload exceeds the V1 size limit."
+                message: "The client hello payload exceeds the size limit."
             )))
             return
         }

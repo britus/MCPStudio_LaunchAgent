@@ -7,32 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E0F400012026081000000001 /* MCPStudioLaunchAgentProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F401012026081000000001 /* MCPStudioLaunchAgentProtocol.swift */; };
-		E0F400022026081000000002 /* ProcessExecutionPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F401022026081000000002 /* ProcessExecutionPolicy.swift */; };
-		E0F400032026081000000003 /* ProcessJobManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F401032026081000000003 /* ProcessJobManager.swift */; };
-		E0F400042026081000000004 /* MCPStudioLaunchAgentProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F401012026081000000001 /* MCPStudioLaunchAgentProtocol.swift */; };
-		E0F400052026081000000005 /* ProcessExecutionPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F401022026081000000002 /* ProcessExecutionPolicy.swift */; };
-		E0F400062026081000000006 /* ProtocolPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F401042026081000000004 /* ProtocolPolicyTests.swift */; };
 		02278F45B42438D5AEE259DE /* MCPStudioLaunchAgentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4FFF0F13533F9E4704794B7 /* MCPStudioLaunchAgentService.swift */; };
 		16CD724B09556F0BD2CB0147 /* Identity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1588051FE3325ED9F5BB9AA7 /* Identity.swift */; };
 		4207C9AC8095A2C0DEEC6542 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FDF9577374694230BB0D092 /* Cocoa.framework */; };
 		4E9AD8BD896FA0C344520D10 /* IdentityConsistencyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CDEE7C4AC603739B1782002 /* IdentityConsistencyTests.swift */; };
 		58015E17247999218A2A6679 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FDF9577374694230BB0D092 /* Cocoa.framework */; };
 		8156CAB77F9D6131A415D68B /* Identity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1588051FE3325ED9F5BB9AA7 /* Identity.swift */; };
+		E0F400012026081000000001 /* MCPStudioLaunchAgentProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F401012026081000000001 /* MCPStudioLaunchAgentProtocol.swift */; };
+		E0F400022026081000000002 /* ProcessExecutionPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F401022026081000000002 /* ProcessExecutionPolicy.swift */; };
+		E0F400032026081000000003 /* ProcessJobManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F401032026081000000003 /* ProcessJobManager.swift */; };
+		E0F400042026081000000004 /* MCPStudioLaunchAgentProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F401012026081000000001 /* MCPStudioLaunchAgentProtocol.swift */; };
+		E0F400052026081000000005 /* ProcessExecutionPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F401022026081000000002 /* ProcessExecutionPolicy.swift */; };
+		E0F400062026081000000006 /* ProtocolPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F401042026081000000004 /* ProtocolPolicyTests.swift */; };
 		E140AEF2C6858EF713CDB915 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F520E9A95082F5A82B92784 /* main.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		E0F401012026081000000001 /* MCPStudioLaunchAgentProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MCPStudioLaunchAgentProtocol.swift; sourceTree = "<group>"; };
-		E0F401022026081000000002 /* ProcessExecutionPolicy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProcessExecutionPolicy.swift; sourceTree = "<group>"; };
-		E0F401032026081000000003 /* ProcessJobManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProcessJobManager.swift; sourceTree = "<group>"; };
-		E0F401042026081000000004 /* ProtocolPolicyTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProtocolPolicyTests.swift; sourceTree = "<group>"; };
-		E0F401052026081000000005 /* MCPStudioLaunchAgent.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = MCPStudioLaunchAgent.entitlements; sourceTree = "<group>"; };
 		1588051FE3325ED9F5BB9AA7 /* Identity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Identity.swift; sourceTree = "<group>"; };
 		1CDEE7C4AC603739B1782002 /* IdentityConsistencyTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = IdentityConsistencyTests.swift; sourceTree = "<group>"; };
 		315BA1EBB9429AC6CA67EC02 /* org.eof.tools.MCPStudio.LaunchAgent.plist.template */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; path = org.eof.tools.MCPStudio.LaunchAgent.plist.template; sourceTree = "<group>"; };
 		5F520E9A95082F5A82B92784 /* main.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		6732DB721BC9BB284EB9A4D4 /* README-AGENT-DESIGN-DESCISION.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = "README-AGENT-DESIGN-DESCISION.md"; sourceTree = "<group>"; };
 		747A0185E37C2D2EDEC7111E /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		88B04F7CE2E232539D77BEBF /* MCPStudioLaunchAgentTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MCPStudioLaunchAgentTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FDF9577374694230BB0D092 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -41,6 +35,11 @@
 		D7FDF6C28611AD4E16DB14C1 /* Package.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		D804AC124BFBD74048BD3B5D /* MCPStudioLaunchAgent */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "compiled.mach-o.executable"; path = MCPStudioLaunchAgent; sourceTree = BUILT_PRODUCTS_DIR; };
 		E037224818AF0F9B88B07D41 /* install.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = install.sh; sourceTree = "<group>"; };
+		E0F401012026081000000001 /* MCPStudioLaunchAgentProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MCPStudioLaunchAgentProtocol.swift; sourceTree = "<group>"; };
+		E0F401022026081000000002 /* ProcessExecutionPolicy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProcessExecutionPolicy.swift; sourceTree = "<group>"; };
+		E0F401032026081000000003 /* ProcessJobManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProcessJobManager.swift; sourceTree = "<group>"; };
+		E0F401042026081000000004 /* ProtocolPolicyTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProtocolPolicyTests.swift; sourceTree = "<group>"; };
+		E0F401052026081000000005 /* MCPStudioLaunchAgent.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = MCPStudioLaunchAgent.entitlements; sourceTree = "<group>"; };
 		F70FCC3701C65746AFC032AD /* uninstall.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = uninstall.sh; sourceTree = "<group>"; };
 		F79BBABC302A4DBC009CC8CB /* build-pkg.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "build-pkg.sh"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -151,7 +150,6 @@
 				D7FDF6C28611AD4E16DB14C1 /* Package.swift */,
 				E0F401052026081000000005 /* MCPStudioLaunchAgent.entitlements */,
 				747A0185E37C2D2EDEC7111E /* README.md */,
-				6732DB721BC9BB284EB9A4D4 /* README-AGENT-DESIGN-DESCISION.md */,
 			);
 			sourceTree = "<group>";
 		};
@@ -423,7 +421,7 @@
 				CODE_SIGN_ENTITLEMENTS = MCPStudioLaunchAgent.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 20260822131519;
+				CURRENT_PROJECT_VERSION = 20261116043941;
 				DEVELOPMENT_TEAM = 83NQU389JN;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -431,7 +429,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "EoF MCP Studio Launch Agent";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
-				MARKETING_VERSION = 1.15;
+				MARKETING_VERSION = 1.17;
 				PRODUCT_BUNDLE_IDENTIFIER = org.eof.tools.MCPStudio.LaunchAgent;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -449,7 +447,7 @@
 				CODE_SIGN_ENTITLEMENTS = MCPStudioLaunchAgent.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				CURRENT_PROJECT_VERSION = 20260822131519;
+				CURRENT_PROJECT_VERSION = 20261116043941;
 				DEVELOPMENT_TEAM = 83NQU389JN;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -457,7 +455,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "EoF MCP Studio Launch Agent";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
-				MARKETING_VERSION = 1.15;
+				MARKETING_VERSION = 1.17;
 				PRODUCT_BUNDLE_IDENTIFIER = org.eof.tools.MCPStudio.LaunchAgent;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

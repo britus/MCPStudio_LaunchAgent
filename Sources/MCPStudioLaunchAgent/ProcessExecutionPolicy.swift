@@ -29,7 +29,7 @@ struct MCPStudioHostOSCommandPolicy: Equatable {
 enum MCPStudioProcessExecutionPolicy {
     static let policyVersion = 2
     static let maximumTimeoutSeconds = 24 * 60 * 60.0
-    static let maximumOutputBytes = 32 * 1024 * 1024
+    static let maximumOutputBytes = 64 * 1024 * 1024
     static let maximumInputBytes = 65 * 1024 * 1024
     static let maximumInlineSourceBytes = 1024 * 1024
     static let maximumConcurrentJobs = 4
